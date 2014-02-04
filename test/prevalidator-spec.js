@@ -234,6 +234,124 @@ describe('prevalidator handles', function () {
 	});
 
 	describe('order of record types', function () {
+		it('happy path', function () {
+			(function () {
+				pv.validateOrder(
+						'HEADER \n' + 
+						'OBSLTE \n' + 
+						'TITLE  \n' + 
+						'SPLIT  \n' + 
+						'CAVEAT \n' + 
+						'COMPND \n' + 
+						'SOURCE \n' + 
+						'KEYWDS \n' + 
+						'EXPDTA \n' + 
+						'NUMMDL \n' + 
+						'MDLTYP \n' + 
+						'AUTHOR \n' + 
+						'REVDAT \n' + 
+						'SPRSDE \n' + 
+						'JRNL   \n' + 
+						'REMARK \n' + 
+						'REMARK \n' + 
+						'REMARK \n' + 
+						'DBREF  \n' + 
+						'DBREF1 \n' + 
+						'DBREF2 \n' + 
+						'SEQADV \n' + 
+						'SEQRES \n' + 
+						'MODRES \n' + 
+						'HET    \n' + 
+						'HETNAM \n' + 
+						'HETSYN \n' + 
+						'FORMUL \n' + 
+						'HELIX  \n' + 
+						'SHEET  \n' + 
+						'SSBOND \n' + 
+						'LINK   \n' + 
+						'CISPEP \n' + 
+						'SITE   \n' + 
+						'CRYST1 \n' + 
+						'ORIGX1 \n' + 
+						'ORIGX2 \n' + 
+						'ORIGX3 \n' + 
+						'SCALE1 \n' + 
+						'SCALE2 \n' + 
+						'SCALE3 \n' + 
+						'MTRIX1 \n' + 
+						'MTRIX2 \n' + 
+						'MTRIX3 \n' + 
+						'MODEL  \n' + 
+						'ATOM   \n' + 
+						'ANISOU \n' + 
+						'TER    \n' + 
+						'HETATM \n' + 
+						'ENDMDL \n' + 
+						'CONECT \n' + 
+						'MASTER \n' + 
+						'END    \n'
+				);
+			}).should.not.throw();
+		});
 
+		it('unhappy path', function () {
+			(function () {
+				pv.validateOrder(
+						'HEADER \n' + 
+						'OBSLTE \n' + 
+						'TITLE  \n' + 
+						'SPLIT  \n' + 
+						'CAVEAT \n' + 
+						'COMPND \n' + 
+						'SOURCE \n' + 
+						'KEYWDS \n' + 
+						'EXPDTA \n' + 
+						'NUMMDL \n' + 
+						'MDLTYP \n' + 
+						'AUTHOR \n' + 
+						'SPRSDE \n' + 
+						'REVDAT \n' + 
+						'JRNL   \n' + 
+						'REMARK \n' + 
+						'REMARK \n' + 
+						'REMARK \n' + 
+						'DBREF  \n' + 
+						'DBREF1 \n' + 
+						'DBREF2 \n' + 
+						'SEQADV \n' + 
+						'SEQRES \n' + 
+						'MODRES \n' + 
+						'HET    \n' + 
+						'HETNAM \n' + 
+						'HETSYN \n' + 
+						'FORMUL \n' + 
+						'HELIX  \n' + 
+						'SHEET  \n' + 
+						'SSBOND \n' + 
+						'LINK   \n' + 
+						'CISPEP \n' + 
+						'SITE   \n' + 
+						'CRYST1 \n' + 
+						'ORIGX1 \n' + 
+						'ORIGX2 \n' + 
+						'ORIGX3 \n' + 
+						'SCALE1 \n' + 
+						'SCALE2 \n' + 
+						'SCALE3 \n' + 
+						'MTRIX1 \n' + 
+						'MTRIX2 \n' + 
+						'MTRIX3 \n' + 
+						'MODEL  \n' + 
+						'ATOM   \n' + 
+						'ANISOU \n' + 
+						'TER    \n' + 
+						'HETATM \n' + 
+						'ENDMDL \n' + 
+						'CONECT \n' + 
+						'MASTER \n' + 
+						'END    \n'
+				);
+			}).should.throw('PREVALIDATION_ERROR: WRONG ORDER OF RECORDS!');
+		});
 	});
 });

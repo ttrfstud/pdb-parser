@@ -110,12 +110,69 @@ var VALID_RECORD_NAMES = {
 	'REMARK ' : 1
 };
 
+var ORDER = [
+	'HEADER ',
+	'OBSLTE ',
+	'TITLE  ',
+	'SPLIT  ',
+	'CAVEAT ',
+	'COMPND ',
+	'SOURCE ',
+	'KEYWDS ',
+	'EXPDTA ',
+	'NUMMDL ',
+	'MDLTYP ',
+	'AUTHOR ',
+	'REVDAT ',
+	'SPRSDE ',
+	'JRNL   ',
+	'REMARK ',
+	'DBREF  ',
+	'DBREF1 ',
+	'DBREF2 ',
+	'SEQADV ',
+	'SEQRES ',
+	'MODRES ',
+	'HET    ',
+	'HETNAM ',
+	'HETSYN ',
+	'FORMUL ',
+	'HELIX  ',
+	'SHEET  ',
+	'SSBOND ',
+	'LINK   ',
+	'CISPEP ',
+	'SITE   ',
+	'CRYST1 ',
+	'ORIGX1 ',
+	'ORIGX2 ',
+	'ORIGX3 ',
+	'SCALE1 ',
+	'SCALE2 ',
+	'SCALE3 ',
+	'MTRIX1 ',
+	'MTRIX2 ',
+	'MTRIX3 ',
+	'MODEL  ',
+	'ATOM   ',
+	'ANISOU ',
+	'TER    ',
+	'HETATM ',
+	'ENDMDL ',
+	'CONECT ',
+	'MASTER ',
+	'END    '
+];
+
 var PREVALIDATION_ERROR = 'PREVALIDATION_ERROR: ';
 
 exports.prevalidate = function (pdb) {
 	validateCharacters(pdb);
 	validateLineLength(pdb);
 	validateRecordTypes(pdb);
+	validateRecordArity(pdb);
+	validateMandatoryTypes(pdb);
+	validateOrder(pdb);
 }
 
 function validateCharacters(text) {
@@ -225,7 +282,29 @@ function validateMandatoryTypes(text) {
 }
 
 function validateOrder(text) {
-	
+	var split = splitIntoLines(text);
+
+	var current = '';
+	var curidx = null;
+	for (var i = 1; i < split.length; i++) {
+		var start = split[i].substring(0, 7)
+
+		if (!current) {
+			current = start;
+			curidx = ORDER.indexOf(current);
+		}
+
+		if (current !== start) {
+			var idx = ORDER.indexOf(current);
+
+			if (curidx > idx) {
+				throw new Error(PREVALIDATION_ERROR + 'WRONG ORDER OF RECORDS!');
+			}
+
+			current = start;
+			curidx = idx;
+		}
+	}
 }
 
 function splitIntoLines(pdb) {
