@@ -64,50 +64,50 @@ describe('prevalidator handles', function () {
 		});
 	});
 
-	describe('line length (= 80)', function () {
+	describe('line length (= 81 + newline)', function () {
 		it ('shorter lines are not ok', function () {
 			(function () {
 				pv.validateLineLength(' ');
-			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 80-LONG');
+			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 81-LONG');
 			(function () {
 				pv.validateLineLength(complementLine(78));
-			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 80-LONG');
+			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 81-LONG');
 		});
 
 		it ('longer lines are not ok', function () {
 			(function () {
-				pv.validateLineLength(complementLine(81));
-			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 80-LONG');
+				pv.validateLineLength(complementLine(83));
+			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 81-LONG');
 		});
 
 		it ('shorter lines among normal lines', function () {
 			(function () {
-				pv.validateLineLength(complementLine(80) + '\n \n' + complementLine(80));
-			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 80-LONG');
+				pv.validateLineLength(complementLine(81) + '\n \n' + complementLine(81));
+			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 81-LONG');
 		});
 
 		it ('longer lines among normal lines', function () {
 			(function () {
-				pv.validateLineLength(complementLine(79) + '\n' + complementLine(80) + '\n' + complementLine(79));
-			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 80-LONG');
+				pv.validateLineLength(complementLine(81) + '\n' + complementLine(82) + '\n' + complementLine(81));
+			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 81-LONG');
 		});
 
 		it ('all normal lines', function () {
 			(function () {
-				pv.validateLineLength(complementLine(79) + '\n' + complementLine(79) + '\n');
+				pv.validateLineLength(complementLine(81) + '\n' + complementLine(81) + '\n');
 			}).should.not.throw();
 		});
 
-		it ('lines not ending in trailing space', function () {
+		it ('lines not ending in trailing newline', function () {
 			(function () {
-				pv.validateLineLength(complementLine(79));
-			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 80-LONG');
+				pv.validateLineLength(complementLine(81));
+			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 81-LONG');
 		});
 
 		it ('lines not ending in multiple space', function () {
 			(function () {
-				pv.validateLineLength(complementLine(79 + '\r\n'));
-			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 80-LONG');
+				pv.validateLineLength(complementLine(81)  + '\r\n');
+			}).should.throw('PREVALIDATION_ERROR: LINE IS NOT 81-LONG');
 		});
 	});
 
