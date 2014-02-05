@@ -4,7 +4,7 @@ describe('date', function () {
 	it('test with valid format of dates', function () {
 		(function () {
 			new Datee('26-Jan-70');
-			new Datee('25-Mar-98');
+			new Datee('25-Jan-70');
 			new Datee('04-Feb-35');
 		}).should.not.throw();
 	});
@@ -40,5 +40,9 @@ describe('date', function () {
 		d.day.should.equal(12);
 		d.month.should.equal(9);
 		d.year.should.equal(2041);
+	});
+
+	it('its toString is original expression', function () {
+		new Datee('27-Jun-57').toString().should.equal('27-Jun-57');
 	});
 });

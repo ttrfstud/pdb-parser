@@ -6,6 +6,12 @@ function Datee(expression) {
 	this.day = getDay(expression);
 	this.month = getMonth(expression);
 	this.year = getYear(expression);
+
+	this.expression = expression;
+}
+
+Datee.prototype.toString = function () {
+	return this.expression;
 }
 
 function getDay(expression) {
@@ -44,7 +50,10 @@ function getYear(expression) {
 Datee.DATE_REG_EXP = /^(((0[1-9]|[1-2][0-9]|30|31)-(Jan|Mar|May|Jul|Aug|Oct|Dec))|((0[1-9]|[1-2][0-9])-Feb)|(([0][1-9]|[1-2][0-9]|30)-(Apr|Jun|Sep|Nov)))-(0[1-9]|[1-9][0-9])$/g;
 
 function validDate(potentialDate) {
-	return Datee.DATE_REG_EXP.test(potentialDate);
+	Datee.DATE_REG_EXP.lastIndex = 0;
+	var rsult = Datee.DATE_REG_EXP.test(potentialDate);
+
+	return rsult;
 }
 
 module.exports = Datee;
