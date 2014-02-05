@@ -21,7 +21,7 @@ for (i = 65; i <= 90; i++) {
 	VALID_CHARACTERS[i] = 1;
 }
 
-for (i = 97; i <= 122;i++) {
+for (i = 97; i <= 122; i++) {
 	VALID_CHARACTERS[i] = 1;
 }
 
