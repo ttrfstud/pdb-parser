@@ -19,18 +19,18 @@ function getDay(expression) {
 }
 
 var MONTHS = [];
-MONTHS['Jan'] = 1;
-MONTHS['Feb'] = 2;
-MONTHS['Mar'] = 3; 
-MONTHS['Apr'] = 4; 
-MONTHS['May'] = 5; 
-MONTHS['Jun'] = 6; 
-MONTHS['Jul'] = 7; 
-MONTHS['Aug'] = 8; 
-MONTHS['Sep'] = 9; 
-MONTHS['Oct'] = 10; 
-MONTHS['Nov'] = 11; 
-MONTHS['Dec'] = 12;
+MONTHS['JAN'] = 1;
+MONTHS['FEB'] = 2;
+MONTHS['MAR'] = 3; 
+MONTHS['APR'] = 4; 
+MONTHS['MAY'] = 5; 
+MONTHS['JUN'] = 6; 
+MONTHS['JUL'] = 7; 
+MONTHS['AUG'] = 8; 
+MONTHS['SEP'] = 9; 
+MONTHS['OCT'] = 10; 
+MONTHS['NOV'] = 11; 
+MONTHS['DEC'] = 12;
 
 function getMonth(expression) {
 
@@ -40,6 +40,7 @@ function getMonth(expression) {
 function getYear(expression) {
 	var year = parseInt(expression.substring(7));
 
+	console.log(year);
 	if (year < 50) {
 		return 2000 + year;
 	} else {
@@ -47,7 +48,7 @@ function getYear(expression) {
 	}
 }
 
-Datee.DATE_REG_EXP = /^(((0[1-9]|[1-2][0-9]|30|31)-(Jan|Mar|May|Jul|Aug|Oct|Dec))|((0[1-9]|[1-2][0-9])-Feb)|(([0][1-9]|[1-2][0-9]|30)-(Apr|Jun|Sep|Nov)))-(0[1-9]|[1-9][0-9])$/g;
+Datee.DATE_REG_EXP = /^(((0[1-9]|[1-2][0-9]|30|31)-(JAN|MAR|MAY|JUL|AUG|OCT|DEC))|((0[1-9]|[1-2][0-9])-FEB)|(([0][1-9]|[1-2][0-9]|30)-(APR|JUN|SEP|NOV)))-(0[1-9]|[1-9][0-9])$/g;
 
 function validDate(potentialDate) {
 	Datee.DATE_REG_EXP.lastIndex = 0;
