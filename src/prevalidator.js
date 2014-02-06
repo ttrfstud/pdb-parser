@@ -185,15 +185,15 @@ function validateCharacters(text) {
 
 function validateLineLength(text) {
 		console.log()
-	if ((text.length % 82)) {
-		throw new Error(PREVALIDATION_ERROR + 'LINE IS NOT 81-LONG');
+	if ((text.length % 81)) {
+		throw new Error(PREVALIDATION_ERROR + 'LINE IS NOT 80-LONG');
 	}
 
 	var split = splitIntoLines(text);
 
 	for (var i = 0; i < split.length; i++) {
-		if (split[i].length !== 81) {
-			throw new Error(PREVALIDATION_ERROR + 'LINE IS NOT 81-LONG');
+		if (split[i].length !== 80) {
+			throw new Error(PREVALIDATION_ERROR + 'LINE IS NOT 80-LONG');
 		}
 	}
 }
