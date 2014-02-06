@@ -12,11 +12,11 @@ describe('string', function () {
 	it('unhappy path', function () {
 		(function () {
 			new Stringg('\n\n');
-		}).should.throw('WRONG LSTRING');
+		}).should.throw('WRONG STRING');
 
 		(function () {
 			new Stringg(':');
-		}).should.throw('WRONG LSTRING');
+		}).should.throw('WRONG STRING');
 	});
 
 	it('keeps string is val prop', function () {

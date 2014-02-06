@@ -1,7 +1,6 @@
 var Obslte = require('../src/records/Obslte');
 var Datee = require('../src/datatypes/Date');
 var IDcode = require('../src/datatypes/IDcode');
-var cc = require('../src/concat-continuations');
 
 describe('obsolete has continuations so always array-based', function () {
 	it('happy path', function () {
@@ -17,19 +16,19 @@ describe('obsolete has continuations so always array-based', function () {
 	it('unhappy path', function () {
 		(function () {
 			Obslte.parse([
-			'OBSLTE    01-JUL-08 21GS     3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ     ',
+			'OBSLTE   01-JUL-08 21GS     3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ     ',
 			'OBSLTE   2 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ                                             ']);
 		}).should.throw('WRONG OBSLTE');
 
 		(function () {
 			Obslte.parse([
-			'OBSLTE    01-JUL-08 21GS     3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ     ']);
+			'OBSLTE   01-JUL-08 21GS     3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ     ']);
 		}).should.throw('WRONG OBSLTE');
 
 		(function () {
 		Obslte.parse([
 			'OBSLTE     01-JUL-08 21GS      3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ     ',
-			'OBSLTE    23CSJ 3CSJ 3CSJ 3CSJ 3CSJ                                             ']);
+			'OBSLTE  23CSJ 3CSJ 3CSJ 3CSJ 3CSJ                                             ']);
 		}).should.throw('WRONG OBSLTE');
 	});
 
@@ -38,12 +37,6 @@ describe('obsolete has continuations so always array-based', function () {
 			'OBSLTE     01-JUL-08 21GS      3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ     ',
 			'OBSLTE   2 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ                                             ']);
 	
-		var a = cc([
-			'OBSLTE     01-JUL-08 21GS      3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ     ',
-			'OBSLTE   2 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ                                             '], 2);
-
-		console.log('a?', a);
-
 		o.repDate.should.be.instanceof(Datee);
 		o.repDate.day.should.equal(1);
 		o.repDate.month.should.equal(7);

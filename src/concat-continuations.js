@@ -10,11 +10,6 @@ function concatContinuations(cArray, cLen) {
 		}
 
 		copy[i] = copy[i].substring(8 + cLen);
-
-		if (copy[i][0] !== ' ') {
-			throw new Error('WRONG CONTINUATION');
-		}
-
 		cont += copy[i];
 	}
 

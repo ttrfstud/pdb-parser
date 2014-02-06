@@ -1,12 +1,13 @@
 function Stringg(expression) {
 	if (/[\r\n]/.test(expression)) {
-		throw new Error('WRONG LSTRING');
+		throw new Error('WRONG STRING');
 	}
 
 	if (/([^\\]\:|^\:)/.test(expression)) {
-		throw new Error('WRONG LSTRING');
+		throw new Error('WRONG STRING');
 	}
 
+	console.log(expression, 'EXPR');
 	Object.defineProperty(this, 'val', {
 		set: function () {},
 		get: function ()  {return expression;}});

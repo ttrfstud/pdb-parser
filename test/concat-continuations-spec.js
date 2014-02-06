@@ -19,12 +19,5 @@ describe('concat continuations', function () {
 		}).should.throw('WRONG CONTINUATION');
 	});
 
-	it('unhappy path', function () {
-		(function () {
-			cc(['OBSLTE   2 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ                                             ',
-			'OBSLTE    3 3CSJ 3CSJ 3CSJ 3CSJ 3CSJ                                             '], 2);
-		}).should.throw('WRONG CONTINUATION');
-	});
-
 	// TODO mb consider the order of continuations?
 });
