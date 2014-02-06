@@ -3,7 +3,8 @@ var IDcode = require('../src/datatypes/IDcode');
 describe('id code', function () {
 	it('happy path', function () {
 		(function () {
-			new IDcode('0ABC')
+			new IDcode('0ABC');
+			new IDcode('12AB');
 		}).should.not.throw();
 	});
 

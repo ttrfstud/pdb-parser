@@ -19,7 +19,7 @@ IDcode.prototype.toString = function () {
 	return this.expression;
 }
 
-IDcode.ID_CODE_REG_EXP = /[0-9][A-Z]{3}/g;
+IDcode.ID_CODE_REG_EXP = /[0-9][A-Z0-9]{3}/g;
 
 function validIDcode(expression) {
 	IDcode.ID_CODE_REG_EXP.lastIndex = 0;
