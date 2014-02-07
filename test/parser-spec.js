@@ -290,7 +290,7 @@ describe('parser', function () {
 			]
 		});
 	});
-	it('parses source 2', function () {
+	it('parses source 2 (chimera)', function () {
 		var s = source([
 			'SOURCE    MOL_ID: 1;                                                           ',
 			'SOURCE   2 ORGANISM_SCIENTIFIC: HOMO SAPIENS, ESCHERICHIA COLI;                ',
@@ -325,6 +325,53 @@ describe('parser', function () {
 					EXPRESSION_SYSTEM_VECTOR_TYPE: 'BACULOVIRUS', 
 					EXPRESSION_SYSTEM_PLASMID: 'PFASTBAC'
 				}
+			]
+		});
+	});
+
+
+	it('parses source 3 (+cellular location)', function () {
+		var s = source([
+			'SOURCE    MOL_ID: 1;                                                           ',
+			'SOURCE   2 ORGANISM_SCIENTIFIC: ESCHERICHIA COLI;                              ',
+			'SOURCE   3 ORGANISM_TAXID: 562;                                                ',
+			'SOURCE   4 STRAIN: K38;                                                        ',
+			'SOURCE   5 CELLULAR_LOCATION: CYTOPLASM;                                       ',
+			'SOURCE   6 PLASMID: PAR/CHEY;                                                  ',
+			'SOURCE   7 MOL_ID: 2;                                                          ',
+			'SOURCE   8 ORGANISM_SCIENTIFIC: ESCHERICHIA COLI;                              ',
+			'SOURCE   9 ORGANISM_TAXID: 562;                                                ',
+			'SOURCE  10 STRAIN: K38;                                                        ',
+			'SOURCE  11 CELLULAR_LOCATION: CYTOPLASM;                                       ',
+			'SOURCE  12 PLASMID: PP2S                                                       '
+		]);
+
+		s.should.equal({
+			srcName: [
+				{
+					MOL_ID: 1,
+					ORGANISM_SCIENTIFIC: [
+						'ESCHERICHIA COLI'
+					],
+					ORGANISM_TAXID: [
+						562
+					],
+					STRAIN: 'K38',
+					CELLULAR_LOCATION: 'CYTOPLASM',
+					PLASMID: 'PAR/CHEY'
+				},
+				{
+					MOL_ID: 2,
+					ORGANISM_SCIENTIFIC: [
+						'ESCHERICHIA COLI'
+					],
+					ORGANISM_TAXID: [
+						562
+					],
+					STRAIN: 'K38',
+					CELLULAR_LOCATION: 'CYTOPLASM',
+					PLASMID: 'PP2S'
+				},
 			]
 		});
 	});
