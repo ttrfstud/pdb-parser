@@ -40,6 +40,59 @@ function split(split) {
 	};
 }
 
+function compnd(compnd) {
+	var continuation = cc(compnd, 2);
+
+	continuation = continuation.split(';');
+
+	var structures = [];
+
+	var structure;
+	console.log('---comps', continuation);
+	for (var i = 0; i < continuation.length; i++) {
+		var split = continuation[i].split(':');
+		var first = split[0].trim();
+		var second = split[1].trim();
+
+		console.log('firrss', first);
+		if (first === 'MOL_ID' || first === 'FRAGMENT') {
+			console.log('struct', structure);
+			if (structure) {
+				structures.push(structure);
+			}
+
+			structure = {};
+		}
+
+		switch(first) {
+			case 'MOL_ID': structure[first] = parseInt(second); break;
+			case 'CHAIN' :
+			case 'SYNONYM' :
+			case 'FRAGMENT' : structure[first] = second.split(', '); break;
+			default: structure[first] = second;
+		}
+	}
+
+	if (structure) {
+		structures.push(structure);
+	}
+
+	return {
+		compound: structures
+	};
+}
+
+function caveat(caveat) {
+	var continuation = cc(caveat, 2);
+	var idCode = continuation.substring(0, 4);
+	var comment = continuation.substring(5);
+
+	return {
+		idCode: idCode,
+		comment: comment
+	}
+}
+
 function header(header) {
 	header = header[0];
 	var classification = header.substring(10, 50).trim();
@@ -72,3 +125,5 @@ exports.header = header;
 exports.obslte = obslte;
 exports.title = title;
 exports.split = split;
+exports.caveat = caveat;
+exports.compnd = compnd;
