@@ -41,14 +41,48 @@ function split(split) {
 }
 
 function compnd(compnd) {
-	var continuation = cc(compnd, 2);
+	return compndOrSource(compnd, 'compound', function (first, second, structure) {
+		switch(first) {
+			case 'MOL_ID': 
+				structure[first] = parseInt(second); break;
+			case 'CHAIN' :
+			case 'SYNONYM' :
+			case 'FRAGMENT' : 
+				structure[first] = second.split(', '); break;
+			default: structure[first] = second;
+		}
+	});
+}
+
+function source(source) {
+	return compndOrSource(source, 'srcName', function (first, second, structure) {
+		switch(first) {
+			case 'MOL_ID':
+			case 'EXPRESSION_SYSTEM_TAXID':
+				 structure[first] = parseInt(second); break;
+			case 'ORGANISM_TAXID':
+				structure[first] = toIntList(second); break;
+			case 'ORGANISM_SCIENTIFIC':
+			case 'FRAGMENT' : 
+				structure[first] = second.split(', '); break;
+
+			default: structure[first] = second;
+		}
+	});
+}
+
+function toIntList(str) {
+	return str.split(',').map(function (e) { return parseInt(e);});
+}
+
+function compndOrSource(text, key, switchCallback) {
+	var continuation = cc(text, 2);
 
 	continuation = continuation.split(';');
 
 	var structures = [];
 
 	var structure;
-	console.log('---comps', continuation);
 	for (var i = 0; i < continuation.length; i++) {
 		var split = continuation[i].split(':');
 		var first = split[0].trim();
@@ -56,7 +90,6 @@ function compnd(compnd) {
 
 		console.log('firrss', first);
 		if (first === 'MOL_ID' || first === 'FRAGMENT') {
-			console.log('struct', structure);
 			if (structure) {
 				structures.push(structure);
 			}
@@ -64,22 +97,18 @@ function compnd(compnd) {
 			structure = {};
 		}
 
-		switch(first) {
-			case 'MOL_ID': structure[first] = parseInt(second); break;
-			case 'CHAIN' :
-			case 'SYNONYM' :
-			case 'FRAGMENT' : structure[first] = second.split(', '); break;
-			default: structure[first] = second;
-		}
+		switchCallback(first, second, structure);
 	}
 
 	if (structure) {
 		structures.push(structure);
 	}
 
-	return {
-		compound: structures
-	};
+	var result = {};
+
+	result[key] = structures;
+
+	return result;
 }
 
 function caveat(caveat) {
@@ -127,3 +156,4 @@ exports.title = title;
 exports.split = split;
 exports.caveat = caveat;
 exports.compnd = compnd;
+exports.source = source;

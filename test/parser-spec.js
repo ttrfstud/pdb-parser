@@ -5,6 +5,7 @@ var title  = require('../src/parser').title ;
 var split  = require('../src/parser').split ;
 var caveat = require('../src/parser').caveat;
 var compnd = require('../src/parser').compnd;
+var source = require('../src/parser').source;
 
 describe('parser', function () {
 	it('parses header', function () {
@@ -224,7 +225,109 @@ describe('parser', function () {
 				}
 			]
 		});
-	}); // TODO: MUTATION left untested
+	});
+	it('parses compnd 5', function () {
+		var c1 = compnd([
+			'COMPND    MOL_ID: 1;                                                           ',
+			'COMPND   2 MOLECULE: ADENOSINE RECEPTOR A2A/SOLUBLE CYTOCHROME B562 CHIMERA;   ',
+			'COMPND   3 CHAIN: A;                                                           ',
+			'COMPND   4 SYNONYM: CYTOCHROME B-562;                                          ',
+			'COMPND   5 ENGINEERED: YES;                                                    ',
+			'COMPND   6 MUTATION: YES                                                   '
+		]);
+
+		c1.should.equal({
+			compound: [
+				{
+					MOL_ID: 1,
+					MOLECULE: 'ADENOSINE RECEPTOR A2A/SOLUBLE CYTOCHROME B562 CHIMERA',
+					CHAIN: [
+						'A'
+					],
+					SYNONYM: [
+						'CYTOCHROME B-562'
+					],
+					ENGINEERED: 'YES',
+					MUTATION: 'YES'
+				}
+			]
+		});
+	});
+
+
+	it('parses source', function () {
+		var s = source([
+			'SOURCE    MOL_ID: 1;                                                           ',
+			'SOURCE   2 ORGANISM_SCIENTIFIC: ESCHERICHIA COLI K12;                          ',
+			'SOURCE   3 ORGANISM_TAXID: 83333;                                              ',
+			'SOURCE   4 STRAIN: K-12;                                                       ',
+			'SOURCE   5 GENE: ACRB, ACRE;                                                   ',
+			'SOURCE   6 EXPRESSION_SYSTEM: ESCHERICHIA COLI;                                ',
+			'SOURCE   7 EXPRESSION_SYSTEM_TAXID: 562;                                       ',
+			'SOURCE   8 EXPRESSION_SYSTEM_STRAIN: C43(DE3);                                 ',
+			'SOURCE   9 EXPRESSION_SYSTEM_VECTOR_TYPE: PLASMID;                             ',
+			'SOURCE  10 EXPRESSION_SYSTEM_PLASMID: PET24                                    '
+		]);
+
+		s.should.equal({
+			srcName: [
+				{
+					MOL_ID: 1,
+					ORGANISM_SCIENTIFIC: [
+						'ESCHERICHIA COLI K12'
+					],
+					ORGANISM_TAXID: [
+						83333
+					],
+					STRAIN: 'K-12',
+					GENE: 'ACRB, ACRE',
+					EXPRESSION_SYSTEM: 'ESCHERICHIA COLI',
+					EXPRESSION_SYSTEM_TAXID: 562,
+					EXPRESSION_SYSTEM_STRAIN: 'C43(DE3)',
+					EXPRESSION_SYSTEM_VECTOR_TYPE: 'PLASMID', 
+					EXPRESSION_SYSTEM_PLASMID: 'PET24'
+				}
+			]
+		});
+	});
+	it('parses source 2', function () {
+		var s = source([
+			'SOURCE    MOL_ID: 1;                                                           ',
+			'SOURCE   2 ORGANISM_SCIENTIFIC: HOMO SAPIENS, ESCHERICHIA COLI;                ',
+			'SOURCE   3 ORGANISM_COMMON: HUMAN;                                             ',
+			'SOURCE   4 ORGANISM_TAXID: 9606, 562;                                          ',
+			'SOURCE   5 GENE: AA2AR_HUMAN, ADORA2, ADORA2A, CYBC;                           ',
+			'SOURCE   6 EXPRESSION_SYSTEM: SPODOPTERA FRUGIPERDA;                           ',
+			'SOURCE   7 EXPRESSION_SYSTEM_COMMON: FALL ARMYWORM;                            ',
+			'SOURCE   8 EXPRESSION_SYSTEM_TAXID: 7108;                                      ',
+			'SOURCE   9 EXPRESSION_SYSTEM_CELL_LINE: SF9;                                   ',
+			'SOURCE  10 EXPRESSION_SYSTEM_VECTOR_TYPE: BACULOVIRUS;                         ',
+			'SOURCE  11 EXPRESSION_SYSTEM_PLASMID: PFASTBAC                                 '
+		]);
+
+		s.should.equal({
+			srcName: [
+				{
+					MOL_ID: 1,
+					ORGANISM_SCIENTIFIC: [
+						'HOMO SAPIENS',
+						'ESCHERICHIA COLI'
+					],
+					ORGANISM_COMMON: 'HUMAN',
+					ORGANISM_TAXID: [
+						9606, 562
+					],
+					GENE: 'AA2AR_HUMAN, ADORA2, ADORA2A, CYBC',
+					EXPRESSION_SYSTEM: 'SPODOPTERA FRUGIPERDA',
+					EXPRESSION_SYSTEM_COMMON: 'FALL ARMYWORM',
+					EXPRESSION_SYSTEM_TAXID: 7108,
+					EXPRESSION_SYSTEM_CELL_LINE: 'SF9',
+					EXPRESSION_SYSTEM_VECTOR_TYPE: 'BACULOVIRUS', 
+					EXPRESSION_SYSTEM_PLASMID: 'PFASTBAC'
+				}
+			]
+		});
+	});
 
 
 })
