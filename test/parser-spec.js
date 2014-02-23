@@ -6,6 +6,7 @@ var split  = require('../src/parser').split ;
 var caveat = require('../src/parser').caveat;
 var compnd = require('../src/parser').compnd;
 var source = require('../src/parser').source;
+var keywds = require('../src/parser').keywds;
 
 describe('parser', function () {
 	it('parses header', function () {
@@ -101,8 +102,7 @@ describe('parser', function () {
 		});
 	});
 
-	// This one passes. Go to hell should
-	xit('parses compnd', function () {
+	it('parses compnd', function () {
 		var c1 = compnd([
 			'COMPND    MOL_ID: 1;                                                          ',
 			'COMPND   2 MOLECULE: ACRIFLAVINE RESISTANCE PROTEIN B;                         ',
@@ -110,7 +110,7 @@ describe('parser', function () {
 			'COMPND   4 ENGINEERED: YES                                                     '
 		]);
 
-		c1.should.equal({
+		c1.should.eql({
 			compound: [
 				{
 					MOL_ID: 1,
@@ -124,7 +124,7 @@ describe('parser', function () {
 		});
 	});
 
-	xit('parses compnd 3', function () {
+	it('parses compnd 3', function () {
 		var c1 = compnd([
 			'COMPND    MOL_ID: 1;                                                            ',
 			'COMPND   2 MOLECULE: RAB FAMILY PROTEIN;                                        ',
@@ -134,7 +134,7 @@ describe('parser', function () {
 			'COMPND   6 ENGINEERED: YES                                                      '
 		]);
 
-		c1.should.equal({
+		c1.should.eql({
 			compound: [
 				{
 					MOL_ID: 1,
@@ -156,7 +156,8 @@ describe('parser', function () {
 			]
 		});
 	});
-	xit('parses compnd 2', function () {
+
+	it('parses compnd 2', function () {
 		var c1 = compnd([
 			'COMPND    MOL_ID: 1;                                                           ',
 			'COMPND   2 MOLECULE: LEUCOANTHOCYANIDIN DIOXYGENASE;                           ',
@@ -167,7 +168,7 @@ describe('parser', function () {
 			'COMPND   7 ENGINEERED: YES                                                     '
 		]);
 
-		c1.should.equal({
+		c1.should.eql({
 			compound: [
 				{
 					MOL_ID: 1,
@@ -188,7 +189,8 @@ describe('parser', function () {
 			]
 		});
 	});
-	xit('parses compnd 4', function () {
+	
+	it('parses compnd 4', function () {
 		var c1 = compnd([
 			'COMPND    MOL_ID: 1;                                                           ',
 			'COMPND   2 MOLECULE: PENICILLOPEPSIN;                                          ',
@@ -203,7 +205,7 @@ describe('parser', function () {
 			'COMPND  11 OTHER_DETAILS: TRANSITION STATE MIMIC INHIBITOR                    '
 		]);
 
-		c1.should.equal({
+		c1.should.eql({
 			compound: [
 				{
 					MOL_ID: 1,
@@ -226,6 +228,7 @@ describe('parser', function () {
 			]
 		});
 	});
+
 	it('parses compnd 5', function () {
 		var c1 = compnd([
 			'COMPND    MOL_ID: 1;                                                           ',
@@ -236,7 +239,7 @@ describe('parser', function () {
 			'COMPND   6 MUTATION: YES                                                   '
 		]);
 
-		c1.should.equal({
+		c1.should.eql({
 			compound: [
 				{
 					MOL_ID: 1,
@@ -254,7 +257,6 @@ describe('parser', function () {
 		});
 	});
 
-
 	it('parses source', function () {
 		var s = source([
 			'SOURCE    MOL_ID: 1;                                                           ',
@@ -269,7 +271,7 @@ describe('parser', function () {
 			'SOURCE  10 EXPRESSION_SYSTEM_PLASMID: PET24                                    '
 		]);
 
-		s.should.equal({
+		s.should.eql({
 			srcName: [
 				{
 					MOL_ID: 1,
@@ -290,6 +292,7 @@ describe('parser', function () {
 			]
 		});
 	});
+	
 	it('parses source 2 (chimera)', function () {
 		var s = source([
 			'SOURCE    MOL_ID: 1;                                                           ',
@@ -305,7 +308,7 @@ describe('parser', function () {
 			'SOURCE  11 EXPRESSION_SYSTEM_PLASMID: PFASTBAC                                 '
 		]);
 
-		s.should.equal({
+		s.should.eql({
 			srcName: [
 				{
 					MOL_ID: 1,
@@ -346,7 +349,7 @@ describe('parser', function () {
 			'SOURCE  12 PLASMID: PP2S                                                       '
 		]);
 
-		s.should.equal({
+		s.should.eql({
 			srcName: [
 				{
 					MOL_ID: 1,
@@ -376,5 +379,25 @@ describe('parser', function () {
 		});
 	});
 
+	it('parses keywds', function (done) {
+		var k = keywds([
+			'KEYWDS    ACRB, MULTIDRUG EFFLUX PUMP, RND, ANTIBIOTIC RESISTANCE, ACRA, TOLC,  ',  
+			'KEYWDS   2 MEMBRANE PROTEIN, PROTON-COUPLED EXCHANGER, TRANSPORT PROTEIN        ']);
 
+		k.should.eql({
+			keywds: [
+				'ACRB',
+				'MULTIDRUG EFFLUX PUMP',
+				'RND',
+				'ANTIBIOTIC RESISTANCE',
+				'ACRA',
+				'TOLC',
+				'MEMBRANE PROTEIN',
+				'PROTON-COUPLED EXCHANGER',
+				'TRANSPORT PROTEIN'
+			]
+		});
+
+		done();
+	});
 })

@@ -88,7 +88,7 @@ function compndOrSource(text, key, switchCallback) {
 		var first = split[0].trim();
 		var second = split[1].trim();
 
-		console.log('firrss', first);
+		// console.log('firrss', first);
 		if (first === 'MOL_ID' || first === 'FRAGMENT') {
 			if (structure) {
 				structures.push(structure);
@@ -150,6 +150,17 @@ function obslte(obslte) {
 	}
 }
 
+function keywds(keywds) {
+	var continuation = cc(keywds, 2);
+	
+	continuation = continuation.split(',');
+	continuation = continuation.map(function (el) { return el.trim(); });
+	
+	return {
+		keywds: continuation
+	};
+}
+
 exports.header = header;
 exports.obslte = obslte;
 exports.title = title;
@@ -157,3 +168,4 @@ exports.split = split;
 exports.caveat = caveat;
 exports.compnd = compnd;
 exports.source = source;
+exports.keywds = keywds;
