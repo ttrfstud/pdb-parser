@@ -264,6 +264,21 @@ function revdat(revdat) {
 	return modNums;
 } 
 
+function sprsde(sprsde) {
+	var continuation = cc(sprsde, 2);
+
+	var sprsdeDate = date(continuation.substr(0, 9));
+	var idCode = continuation.substr(10, 4);
+
+	continuation = continuation.substr(15).split(' ');
+
+	return {
+		sprsdeDate: sprsdeDate,
+		idCode: idCode,
+		sIdCode: continuation
+	};
+}
+
 exports.header = header;
 exports.obslte = obslte;
 exports.title = title;
@@ -277,3 +292,4 @@ exports.nummdl = nummdl;
 exports.mdltyp = mdltyp;
 exports.author = author;
 exports.revdat = revdat;
+exports.sprsde = sprsde;

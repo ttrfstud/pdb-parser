@@ -12,6 +12,7 @@ var nummdl = require('../src/parser').nummdl;
 var mdltyp = require('../src/parser').mdltyp;
 var author = require('../src/parser').author;
 var revdat = require('../src/parser').revdat;
+var sprsde = require('../src/parser').sprsde;
 
 describe('parser', function () {
 	it('parses header', function () {
@@ -560,6 +561,38 @@ describe('parser', function () {
 					modType: 0
 				}
 			]);
+		done();
+	});
+
+	it('parses sprsde', function (done) {
+		var s = sprsde([
+				'SPRSDE  1 10-MAR-11 2HRT      2ART 2BRT 2CRT 2DRT 2ERT 2FRT 2GRT 2IRT 2JRT 2KRT ',
+				'SPRSDE  1 2LRT 2MRT                                                             ',
+			]);
+
+		s.should.eql({
+				sprsdeDate: {
+					day: 10,
+					month: 3,
+					year: 2011
+				},
+				idCode: '2HRT',
+				sIdCode: [
+					'2ART',
+					'2BRT',
+					'2CRT',
+					'2DRT',
+					'2ERT',
+					'2FRT',
+					'2GRT',
+					'2IRT',
+					'2JRT',
+					'2KRT',
+					'2LRT',
+					'2MRT'
+				]
+			});
+
 		done();
 	});
 })
