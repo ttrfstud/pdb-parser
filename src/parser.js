@@ -478,6 +478,65 @@ function remark1(remark1) {
 	};
 }
 
+function remark2(remark2) {
+	if (remark2[1].indexOf('NOT APPLICABLE') > 0) {
+		return {
+			applicable: false
+		};
+	}
+
+	return {
+		applicable: true,
+		resolution: parseFloat(remark2[1].substring(26, 30))
+	};
+}
+
+function remark3(remark3) {
+	var data = '';
+
+	for (var i = 1; i < remark3.length; i++) {
+		data += remark3[i].substr(11) + '\n';
+	}
+
+	return {
+		data: data
+	};
+}
+
+function remark4(remark4) {
+	var version = parseFloat(remark4[1].substring(40, 44));
+	var date0 = date(remark4[1].substr(46, 9));
+
+	return {
+		version: version,
+		date: date0
+	};
+}
+
+function remark5(remark5) {
+	return remark0(remark5);
+}
+
+function remark100(remark100) {
+	if (remark100[1].indexOf('BNL') !== -1) {
+		return {
+			site: 'BNL'
+		};
+	}
+
+	var site = remark100[1].substring(44, 48);
+	var date0 = date(remark100[1].substr(52, 9));
+	var code = remark100[2].substring(31).trim();
+
+	code = code.substring(0, code.length - 1);
+
+	return {
+		site: site,
+		date: date0,
+		code: code
+	}
+}
+
 exports.header = header;
 exports.obslte = obslte;
 exports.title  = title ;
@@ -503,3 +562,8 @@ exports.jrnldoi = jrnldoi;
 exports.jrnl   = jrnl  ;
 exports.remark0 = remark0;
 exports.remark1 = remark1;
+exports.remark2 = remark2;
+exports.remark3 = remark3;
+exports.remark4 = remark4;
+exports.remark5 = remark5;
+exports.remark100 = remark100;

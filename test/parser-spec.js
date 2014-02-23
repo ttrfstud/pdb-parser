@@ -27,6 +27,12 @@ var jrnl   = require('../src/parser').jrnl;
 
 var remark0 = require('../src/parser').remark0;
 var remark1 = require('../src/parser').remark1;
+var remark2 = require('../src/parser').remark2;
+var remark3 = require('../src/parser').remark3;
+var remark4 = require('../src/parser').remark4;
+var remark5 = require('../src/parser').remark5;
+
+var remark100 = require('../src/parser').remark100;
 
 describe('parser', function () {
 	it('parses header', function () {
@@ -1015,4 +1021,123 @@ describe('parser', function () {
 
 			done();
 	});
-})
+
+	it('parses remark 2 (not applicable)', function (done) {
+		var r2 = remark2([
+				'REMARK   2                                                                      ',
+				'REMARK   2 RESOLUTION. NOT APPLICABLE.                                          '
+			]);
+
+		r2.should.eql({
+			applicable: false
+		});
+
+		done();
+	});
+
+	it('parses remark 2', function (done) {
+		var r2 = remark2([
+				'REMARK   2                                                                      ',
+				'REMARK   2 RESOLUTION.    1.74 ANGSTROMS.                                       '
+			]);
+
+		r2.should.eql({
+			applicable: true,
+			resolution: 1.74
+		});
+
+		done();
+	});
+
+	// it seems to be a free text, but the format seems to be program specific, so must be preserved
+	it('parses remark3', function (done) {
+		var r3 = remark3([
+				'REMARK   3                                                                      ',
+				'REMARK   3 REFINEMENT.                                                          ',
+				'REMARK   3   PROGRAM     : CYANA 2.0.17                                         ',
+				'REMARK   3   AUTHORS     : GUNTERT, P.                                          ',
+				'REMARK   3                                                                      ',
+				'REMARK   3  OTHER REFINEMENT REMARKS: NULL                                      '
+			]);
+
+		r3.should.eql({
+			data: 
+				'REFINEMENT.                                                          \n' +
+				'  PROGRAM     : CYANA 2.0.17                                         \n' +
+				'  AUTHORS     : GUNTERT, P.                                          \n' +
+				'                                                                     \n' +
+				' OTHER REFINEMENT REMARKS: NULL                                      \n'
+		});
+
+		done();
+	});
+
+	it('parses remark4', function (done) {
+		var r4 = remark4([
+				'REMARK   4                                                                      ',
+				'REMARK   4 2CQB COMPLIES WITH FORMAT V. 3.15, 01-DEC-08                         '
+			]);	
+
+		r4.should.eql({
+			version: 3.15,
+			date: {
+				day: 1,
+				month: 12,
+				year: 2008
+			}
+		});
+
+		done();
+	});
+
+	// from the description, it seems to be free squeezeable text
+	it('parses remark5', function (done) {
+		var r5 = remark5([
+				'REMARK   5                                                                      ',
+				'REMARK   5 I OBSOLETED THIS ENTRY BECAUSE BECAUSE BECAUSE BECAUSE BECAUSE       ',
+				'REMARK   5 BECAUSE BECAUSE BECAUSE BECAUSE BECAUSE                              '
+			]);
+
+		r5.should.eql({
+			data: 'I OBSOLETED THIS ENTRY BECAUSE BECAUSE BECAUSE BECAUSE BECAUSE\n' + 
+			'BECAUSE BECAUSE BECAUSE BECAUSE BECAUSE\n'
+		})
+
+		done();
+	});
+
+	// remarks6-99 seem to be unused
+
+	it('parses remark100 (BNL)', function (done) {
+		var r100 = remark100([
+				'REMARK 100                                                                      ',
+				'REMARK 100 THIS ENTRY HAS BEEN PROCESSED BY BNL.                                '
+			]);
+
+		r100.should.eql({
+			site: 'BNL'
+		});
+
+		done();
+	});
+
+	it('parses remark100 (not BNL)', function (done) {
+		var r100 = remark100([
+				'REMARK 100                                                                      ',
+				'REMARK 100 THIS ENTRY HAS BEEN PROCESSED BY PDBJ ON 24-MAY-05.                  ',
+				'REMARK 100 THE RCSB ID CODE IS RCSB024502.                                      '
+			]);
+
+		r100.should.eql({
+			site: 'PDBJ',
+			date: {
+				day: 24,
+				month: 5,
+				year: 2005
+			},
+			code: 'RCSB024502'			
+		});
+
+		done();
+	});
+});
