@@ -433,6 +433,51 @@ function jrnl(jrnl) {
 	return result;
 }
 
+function remark0 (remark0) {
+	var data = '';
+
+	for (var i = 0; i < remark0.length; i++) {
+		var chunk = remark0[i].substring(11).trim();
+
+		if (i) {
+			data += chunk + '\n';
+		}
+	}
+
+	return {
+		data: data
+	};
+}
+
+function remark1(remark1) {
+	remark1 = remark1.slice(1);
+
+	var entry;
+	var ref = [];
+	var jrnls = [];
+	for (var i = 0; i < remark1.length; i++) {
+		if (remark1[i].substring(11, 20) === 'REFERENCE') {
+			if (ref.length) {
+				var jrnl0 = jrnl(ref);
+				jrnl0.entry = entry;
+				jrnls.push(jrnl0);
+			}
+			ref = [];
+			entry = parseInt(remark1[i].substring(21));
+		} else {
+			ref.push(remark1[i]);
+		}
+	}
+
+	jrnl0 = jrnl(ref);
+	jrnl0.entry = entry;
+	jrnls.push(jrnl0);
+
+	return {
+		entries: jrnls
+	};
+}
+
 exports.header = header;
 exports.obslte = obslte;
 exports.title  = title ;
@@ -456,3 +501,5 @@ exports.jrnlrefn = jrnlrefn;
 exports.jrnlpmid = jrnlpmid;
 exports.jrnldoi = jrnldoi;
 exports.jrnl   = jrnl  ;
+exports.remark0 = remark0;
+exports.remark1 = remark1;

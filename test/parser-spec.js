@@ -25,6 +25,9 @@ var jrnldoi  = require('../src/parser').jrnldoi ;
 
 var jrnl   = require('../src/parser').jrnl;
 
+var remark0 = require('../src/parser').remark0;
+var remark1 = require('../src/parser').remark1;
+
 describe('parser', function () {
 	it('parses header', function () {
 		var h = header(['HEADER    MEMBRANE PROTEIN, TRANSPORT PROTEIN     20-JUL-06   2HRT              ']);
@@ -899,5 +902,117 @@ describe('parser', function () {
 
 			done();
 		});
+	});
+
+	it('parses remark 0', function (done) {
+		var r0 = remark0([
+				'REMARK   0                                                                      ',
+				'REMARK   0 THIS ENTRY yyyy REFLECTS AN ALTERNATIVE MODELING OF THE              ',
+				'REMARK   0 ORIGINAL STRUCTURAL DATA (RxxxxSF or xxxx.MR) DETERMINED BY          ',
+				'REMARK   0 AUTHORS OF THE PDB ENTRY xxxx.                                       ',
+				'REMARK   0                                                                      ',
+				'REMARK   0 ORIGINAL DATA REFERENCE 1                                            ',
+				'REMARK   0 PDB ID: XXXX                                                         ',
+				'REMARK   0 AUTH AUTHOR INITIALS, AUTHOR LAST NAME                               ',
+				'REMARK   0 TITL                                                                 ',
+				'REMARK   0 REF JRNL_NAME VOLUMNE PG YEAR                                        ',
+				'REMARK   0 REFN ISSN #                                                          ',
+				'REMARK   0 PMID XXXXXXX                                                         ',
+				'REMARK   0 DOI YYYYYYY                                                          '
+			]);
+
+		r0.should.eql({
+			data: 'THIS ENTRY yyyy REFLECTS AN ALTERNATIVE MODELING OF THE\n' + 
+				  'ORIGINAL STRUCTURAL DATA (RxxxxSF or xxxx.MR) DETERMINED BY\n' +
+				  'AUTHORS OF THE PDB ENTRY xxxx.\n' + 
+				  '\n' +
+				  'ORIGINAL DATA REFERENCE 1\n' +
+				  'PDB ID: XXXX\n' + 
+				  'AUTH AUTHOR INITIALS, AUTHOR LAST NAME\n' + 
+				  'TITL\n' + 
+				  'REF JRNL_NAME VOLUMNE PG YEAR\n' + 
+				  'REFN ISSN #\n' +
+				  'PMID XXXXXXX\n' + 
+				  'DOI YYYYYYY\n'
+		});
+
+		done();
+	});
+
+	it('parses remark1', function (done) {
+		var r1 = remark1([
+				'REMARK   1                                                                      ',
+				'REMARK   1 REFERENCE 1                                                          ',
+				'REMARK   1  AUTH   J.N.BREG,J.H.J.VAN OPHEUSDEN,M.J.M.BURGERING,                ',
+				'REMARK   1  AUTH 2 R.BOELENS,R.KAPTEIN                                          ',
+				'REMARK   1  TITL   STRUCTURE OF ARC REPRESSOR IN SOLUTION: EVIDENCE             ',
+				'REMARK   1  TITL 2 FOR A FAMILY OF B-SHEET DNA-BINDING PROTEIN                  ',
+				'REMARK   1  REF    NATURE                        V. 346   586 1990              ',
+				'REMARK   1  REFN                   ISSN 0028-0836                               ',
+				'REMARK   1  PMID   2377232                                                      ',
+				'REMARK   1  DOI    10.1038/346586a0                                             ',
+				'REMARK   1 REFERENCE 2                                                          ',
+				'REMARK   1  AUTH   J.N.BREG,R.BOELENS,A.V.E.GEORGE,R.KAPTEIN                    ',
+				'REMARK   1  TITL   SEQUENCE-SPECIFIC 1H NMR ASSIGNMENT AND SECONDARY            ',
+				'REMARK   1  TITL 2 STRUCTURE OF THE ARC REPRESSOR OF BACTERIOPHAGE              ',
+				'REMARK   1  TITL 3 P22 AS DETERMINED BY 2D 1H NMR SPECTROSCOPY                  ',
+				'REMARK   1  REF    BIOCHEMISTRY                  V.  28  9826 1989              ',
+				'REMARK   1  REFN                   ISSN 0006-2960                               ',
+				'REMARK   1  PMID   2611268                                                      '
+			]);
+
+			r1.should.eql({
+				entries:
+				[
+					{
+						entry: 1,
+						authorList: [
+							'J.N.BREG',
+							'J.H.J.VAN OPHEUSDEN',
+							'M.J.M.BURGERING',
+							'R.BOELENS',
+							'R.KAPTEIN'  
+						],
+						title: 'STRUCTURE OF ARC REPRESSOR IN SOLUTION: EVIDENCE FOR A FAMILY OF B-SHEET DNA-BINDING PROTEIN',
+						ref: {
+							pubName: 'NATURE',
+							published: true,
+							volume: 346,
+							page: 586,
+							year: 1990
+						},
+						refn: {
+							published: true,
+							issn: '0028-0836'
+						},
+						pmid: '2377232',
+						doi: '10.1038/346586a0'
+					},
+					{
+						entry: 2,
+						authorList: [
+							'J.N.BREG',
+							'R.BOELENS',
+							'A.V.E.GEORGE',
+							'R.KAPTEIN'
+						],
+						title: 'SEQUENCE-SPECIFIC 1H NMR ASSIGNMENT AND SECONDARY STRUCTURE OF THE ARC REPRESSOR OF BACTERIOPHAGE P22 AS DETERMINED BY 2D 1H NMR SPECTROSCOPY',
+						ref: {
+							pubName: 'BIOCHEMISTRY',
+							volume: 28,
+							page: 9826,
+							year: 1989,
+							published: true
+						},
+						refn: {
+							published: true,
+							issn: '0006-2960'
+						},
+						pmid: '2611268'
+					}
+				]
+			});
+
+			done();
 	});
 })
