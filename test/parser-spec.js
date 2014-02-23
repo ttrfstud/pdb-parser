@@ -8,6 +8,9 @@ var compnd = require('../src/parser').compnd;
 var source = require('../src/parser').source;
 var keywds = require('../src/parser').keywds;
 var expdta = require('../src/parser').expdta;
+var nummdl = require('../src/parser').nummdl;
+var mdltyp = require('../src/parser').mdltyp;
+var author = require('../src/parser').author;
 
 describe('parser', function () {
 	it('parses header', function () {
@@ -426,6 +429,64 @@ describe('parser', function () {
 				'FIBER DIFFRACTION',
 				'NEUTRON DIFFRACTION',
 				'ELECTRON CRYSTALLOGRAPHY'
+			]
+		});
+
+		done();
+	});
+
+	it('parses nummdl', function (done) {
+		var n = nummdl([
+				'NUMMDL    20                                                                    '
+			]);
+	
+		n.should.eql({
+			modelNumber: 20
+		});
+
+		done();
+	});
+
+	it('parses mdltyp', function (done) {
+		var m = mdltyp([
+				'MDLTYP    CA ATOMS ONLY, CHAIN A, B, C, D, E, F, G, H, I, J, K ; P ATOMS ONLY    ', 
+				'MDLTYP  2 CHAIN X, Y, Z                                                          '
+			]);
+
+		m.should.eql({
+			comment: [
+				'CA ATOMS ONLY, CHAIN A, B, C, D, E, F, G, H, I, J, K',
+				'P ATOMS ONLY CHAIN X, Y, Z'
+			]
+		});
+
+		done();
+	});
+
+	it('parses author', function (done) {
+		var a = author([
+				'AUTHOR    A.P.KUZIN,Y.CHEN,J.SEETHARAMAN,C.-K.HO,K.CUNNINGHAM,                  ',
+				'AUTHOR   2 H.JANJUA,K.CONOVER,L.-C.MA,R.XIAO,T.B.ACTON,G.T.MONTELIONE,          ',
+				'AUTHOR   3 J.F.HUNT,L.TONG,NORTHEAST STRUCTURAL GENOMICS CONSORTIUM             ',
+				'AUTHOR   4 (NESG)                                                               '
+			]);
+
+		a.should.eql({
+			authorList: [
+				'A.P.KUZIN',
+				'Y.CHEN',
+				'J.SEETHARAMAN',
+				'C.-K.HO',
+				'K.CUNNINGHAM',
+				'H.JANJUA',
+				'K.CONOVER',
+				'L.-C.MA',
+				'R.XIAO',
+				'T.B.ACTON',
+				'G.T.MONTELIONE',
+				'J.F.HUNT',
+				'L.TONG',
+				'NORTHEAST STRUCTURAL GENOMICS CONSORTIUM (NESG)'
 			]
 		});
 

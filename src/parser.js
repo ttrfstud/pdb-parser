@@ -170,6 +170,34 @@ function expdta(expdta) {
 	};
 }
 
+function nummdl(nummdl) {
+	return {
+		modelNumber: parseInt(nummdl[0].substr(8), 10)
+	};
+}
+
+function mdltyp(mdltyp) {
+	var continuation = cc(mdltyp, 2);
+
+	continuation = continuation.split(/\s*;\s*/g);
+
+	return {
+		comment: continuation
+	};
+}
+
+function author(author) {
+	var continuation = cc(author, 2);
+
+	continuation = continuation.split(/\s?,\s?/g);
+
+	return {
+		authorList: continuation
+	};
+
+	return
+}
+
 exports.header = header;
 exports.obslte = obslte;
 exports.title = title;
@@ -179,3 +207,6 @@ exports.compnd = compnd;
 exports.source = source;
 exports.keywds = keywds;
 exports.expdta = expdta;
+exports.nummdl = nummdl;
+exports.mdltyp = mdltyp;
+exports.author = author;
