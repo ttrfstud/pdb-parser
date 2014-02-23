@@ -194,9 +194,75 @@ function author(author) {
 	return {
 		authorList: continuation
 	};
-
-	return
 }
+
+function revdat(revdat) {
+	var modNums = [[]];
+	var currentModNum, prevModNum, i, j = 0;
+
+	console.log('\n');
+
+	function modnum(revdatLine) {
+		console.log(revdatLine);
+		return parseInt(revdatLine.substr(7, 3), 10);
+	}
+
+	for (var i = 0; i < revdat.length; i++) {
+		currentModNum = modnum(revdat[i]);
+
+		console.log(currentModNum);
+
+		if (!prevModNum) {
+			prevModNum = currentModNum;
+		}
+
+		if (currentModNum !== prevModNum) {
+			modNums.push([]);
+			j++;
+			prevModNum = currentModNum;
+		}
+
+		if (!modNums[j].length) {
+			modNums[j].push(currentModNum);
+		} 
+
+		modNums[j].push(revdat[i]);
+	}
+
+	modNums = modNums.map(function (el) {
+		var modNum = el[0];
+		var continuation = cc(el.slice(1), 4);
+		var modDate = date(continuation.substr(0, 9));
+		var modId = continuation.substr(10, 4);
+		console.log(continuation);
+		console.log(continuation.substr(18));
+		console.log(continuation.substr(15));
+		var modType = parseInt(continuation.substr(15, 1), 10);
+		var records = continuation.substr(17).split(' ').reduce(function (acc, el) {
+			if (!el) {
+				return acc;
+			}
+
+			acc.push(el);
+			return acc;
+		}, []);
+
+		var result = {
+			modNum: modNum,
+			modDate: modDate,
+			modId: modId,
+			modType: modType
+		};
+
+		if (records.length) {
+			result.record = records;
+		}
+
+		return result;
+	});
+
+	return modNums;
+} 
 
 exports.header = header;
 exports.obslte = obslte;
@@ -210,3 +276,4 @@ exports.expdta = expdta;
 exports.nummdl = nummdl;
 exports.mdltyp = mdltyp;
 exports.author = author;
+exports.revdat = revdat;

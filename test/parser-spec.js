@@ -11,6 +11,7 @@ var expdta = require('../src/parser').expdta;
 var nummdl = require('../src/parser').nummdl;
 var mdltyp = require('../src/parser').mdltyp;
 var author = require('../src/parser').author;
+var revdat = require('../src/parser').revdat;
 
 describe('parser', function () {
 	it('parses header', function () {
@@ -493,16 +494,72 @@ describe('parser', function () {
 		done();
 	});
 
-	it('parses  revdat', function (done) {
+	it('parses revdat', function (done) {
 		var r = revdat([
 				'REVDAT   4 1 01-MAR-90 2HRT    1       REMARK JRNL   REVDAT AUTHOR TITLE MDLTYP ',
 				'REVDAT   4 2 SOURCE                                                             ',
-				'REVDAT   3   13-JUL-11 3A22    1       VERSN                                    ',
-				'REVDAT   2   20-OCT-09 3A22    1       JRNL                                     ',
-				'REVDAT   1   14-JUL-09 3A22    0                                                '
+				'REVDAT   3   13-JUL-11 2HRT    1       VERSN                                    ',
+				'REVDAT   2   20-OCT-09 2HRT    1       JRNL                                     ',
+				'REVDAT   1   14-JUL-09 2HRT    0                                                '
 			]);
 
-		
+		r.should.eql([
+				{
+					modNum: 4,
+					modDate: {
+						day: 1,
+						month: 3,
+						year: 1990
+					},
+					modId: '2HRT',
+					modType: 1,
+					record: [
+						'REMARK',
+						'JRNL',
+						'REVDAT',
+						'AUTHOR',
+						'TITLE',
+						'MDLTYP',
+						'SOURCE',
+					] 
+				},
+				{
+					modNum: 3,
+					modDate: {
+						day: 13,
+						month: 7,
+						year: 2011
+					},
+					modId: '2HRT',
+					modType: 1,
+					record: [
+						'VERSN'
+					]
+				},
+				{
+					modNum: 2,
+					modDate: {
+						day: 20,
+						month: 10,
+						year: 2009
+					},
+					modId: '2HRT',
+					modType: 1,
+					record: [
+						'JRNL'
+					]
+				},
+				{
+					modNum: 1,
+					modDate: {
+						day: 14,
+						month: 7,
+						year: 2009
+					},
+					modId: '2HRT',
+					modType: 0
+				}
+			]);
 		done();
 	});
 })
