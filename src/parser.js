@@ -277,26 +277,20 @@ function jrnlauth(jrnlauth) {
 	var continuation = cc(jrnlauth, 10);
 	continuation = continuation.split(',').map(function (el) { return el.trim(); });
 
-	return {
-		authorList: continuation
-	};
+	return continuation;
 }
 
 function jrnltitl(jrnltitl) {
 	var continuation = cc(jrnltitl, 10);
 
-	return {
-		title: continuation
-	};
+	return continuation;
 }
 
 function jrnledit(jrnledit) {
 	var continuation = cc(jrnledit, 10);
 	continuation = continuation.split(',').map(function (el) { return el.trim(); });
 
-	return {
-		editorList: continuation
-	};
+	return continuation;
 }
 
 function jrnlref(jrnlref) {
@@ -353,9 +347,7 @@ function jrnlref(jrnlref) {
 function jrnlpubl(jrnlpubl) {
 	var continuation = cc(jrnlpubl, 10);
 
-	return {
-		pub: continuation
-	};
+	return continuation;
 }
 
 function jrnlrefn(jrnlrefn) {
@@ -369,6 +361,76 @@ function jrnlrefn(jrnlrefn) {
 		published: true,
 		issn: jrnlrefn[0].substring(40, 65).trim() 
 	};
+}
+
+function jrnlpmid(jrnlpmid) {
+	var continuation = cc(jrnlpmid, 11);
+
+	return continuation;
+}
+
+function jrnldoi(jrnldoi) {
+	var continuation = cc(jrnldoi, 11);
+
+	return continuation;
+}
+
+var JRNL_HASH = {
+	'AUTH' : {
+		f: jrnlauth,
+		prop: 'authorList'
+	},
+	'TITL' : {
+		f: jrnltitl,
+		prop: 'title'
+	},
+	'EDIT' : {
+		f: jrnledit,
+		prop: 'editorList'
+	},
+	'REF ' : {
+		f: jrnlref,
+		prop: 'ref'
+	},
+	'PUBL' : {
+		f: jrnlpubl,
+		prop: 'pub'
+	},
+	'REFN' : {
+		f: jrnlrefn,
+		prop: 'refn'
+	},
+	'PMID' : {
+		f: jrnlpmid,
+		prop: 'pmid'
+	},
+	'DOI ' : {
+		f: jrnldoi,
+		prop: 'doi'
+	}
+};
+
+function jrnl(jrnl) {
+	var designator = '';
+	var group = [];
+	var result = {};
+
+	for (var i = 0; i < jrnl.length; i++) {
+		var currentDesignator = jrnl[i].substring(12, 16);
+		if (designator !== currentDesignator) {
+			if (group.length) {
+				result[JRNL_HASH[designator].prop] = JRNL_HASH[designator].f(group);
+			}
+			group = [];
+			designator = currentDesignator;
+		}
+
+		group.push(jrnl[i]);
+	}
+
+	result[JRNL_HASH[designator].prop] = JRNL_HASH[designator].f(group);
+
+	return result;
 }
 
 exports.header = header;
@@ -391,3 +453,6 @@ exports.jrnledit = jrnledit;
 exports.jrnlref  = jrnlref ;
 exports.jrnlpubl = jrnlpubl;
 exports.jrnlrefn = jrnlrefn;
+exports.jrnlpmid = jrnlpmid;
+exports.jrnldoi = jrnldoi;
+exports.jrnl   = jrnl  ;

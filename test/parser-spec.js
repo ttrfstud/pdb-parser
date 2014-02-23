@@ -20,6 +20,10 @@ var jrnledit = require('../src/parser').jrnledit;
 var jrnlref  = require('../src/parser').jrnlref ;
 var jrnlpubl = require('../src/parser').jrnlpubl;
 var jrnlrefn = require('../src/parser').jrnlrefn;
+var jrnlpmid = require('../src/parser').jrnlpmid;
+var jrnldoi  = require('../src/parser').jrnldoi ;
+
+var jrnl   = require('../src/parser').jrnl;
 
 describe('parser', function () {
 	it('parses header', function () {
@@ -611,16 +615,14 @@ describe('parser', function () {
 					'JRNL        AUTH 2 K.M.POS                                                      '
 				]);
 
-			ja.should.eql({
-				authorList: [
+			ja.should.eql([
 					'M.A.SEEGER',
 					'A.SCHIEFNER',
 					'T.EICHER',
 					'F.VERREY',
 					'K.DIEDERICHS',
 					'K.M.POS'
-				]
-			});
+				]);
 
 			done();
 		});
@@ -631,9 +633,7 @@ describe('parser', function () {
 					'JRNL        TITL 2 PUMP MECHANISM.                                              '
 				]);
 
-			jt.should.eql({
-				title: 'STRUCTURAL ASYMMETRY OF ACRB TRIMER SUGGESTS A PERISTALTIC PUMP MECHANISM.'
-			})
+			jt.should.eql('STRUCTURAL ASYMMETRY OF ACRB TRIMER SUGGESTS A PERISTALTIC PUMP MECHANISM.')
 
 			done();
 		});
@@ -643,8 +643,7 @@ describe('parser', function () {
 					'JRNL        EDIT   A.A.IVANOV, A.B.IVANOV, A.C.IVANOV, A.D.IVANOV, A.E.IVANOV,  ',
 					'JRNL        EDIT 2 A.A.IVANOV, A.B.IVANOV, A.C.IVANOV, A.D.IVANOV, J.VAN JOOK   '
 				]);
-			je.should.eql({
-				editorList: [
+			je.should.eql([
 					'A.A.IVANOV',
 					'A.B.IVANOV',
 					'A.C.IVANOV',
@@ -655,8 +654,7 @@ describe('parser', function () {
 					'A.C.IVANOV',
 					'A.D.IVANOV',
 					'J.VAN JOOK'
-				]
-			});
+				]);
 
 			done();
 		});
@@ -777,14 +775,12 @@ describe('parser', function () {
 					'JRNL        PUBL 2 2LAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAH ',
 				]);
 
-			jp.should.eql({
-				pub: 'BLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAH 2LAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAH'
-			});
+			jp.should.equal('BLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAH 2LAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAH');
 
 			done();
 		});
 
-		it('parses refn (not published)', function (done) {
+		it('parses jrnl refn (not published)', function (done) {
 			var jr = jrnlrefn([
 					'JRNL        REFN                                                                '
 				]);
@@ -796,7 +792,7 @@ describe('parser', function () {
 			done();
 		});
 
-		it('parses refn (published, ISSN)', function (done) {
+		it('parses jrnl refn (published, ISSN)', function (done) {
 			var jr = jrnlrefn([
 					'JRNL        REFN                   ISSN 0960-894X                               '
 				]);
@@ -809,7 +805,7 @@ describe('parser', function () {
 			done();
 		});
 
-		it('parses refn (published, ESSN)', function (done) {
+		it('parses jrnl refn (published, ESSN)', function (done) {
 			var jr = jrnlrefn([
 					'JRNL        REFN                   ESSN 0960-894X                               '
 				]);
@@ -817,6 +813,88 @@ describe('parser', function () {
 			jr.should.eql({
 				published: true,
 				issn: '0960-894X'
+			});
+
+			done();
+		});
+
+		// This part is also distorted in the spec
+		it('parses jrnl pmid', function (done) {
+			var jp = jrnlpmid([
+					'JRNL        PMID   1629852711111111111111111111111111111111111111111111233333333',
+					'JRNL        PMID 2 16298527                                                     '
+				]);
+
+			// if it 50-digit integer, it cannot be stored in javascript (or if its longer).
+			// so stored as string
+			jp.should.equal('162985271111111111111111111111111111111111111111111123333333316298527');
+
+			done();
+		});
+
+		it('parses jrnl doi', function (done) {
+			var jd = jrnldoi([
+				'JRNL        DOI    1629852711111111111111111111111111111111111111111111233333333',
+				'JRNL        DOI  2 16298527                                                     '
+				]);
+
+			jd.should.eql('162985271111111111111111111111111111111111111111111123333333316298527');
+
+			done();
+		});
+
+		it('parses jrnl', function (done) {
+			var j = jrnl([
+						'JRNL        AUTH   K.HAKANSSON,M.CARLSSON,L.A.SVENSSON,A.LILJAS,                ',
+						'JRNL        AUTH 2 K.HAKANSSON2,M.CARLSSON2,L.A.SVENSSON2,A.LILJAS2             ',
+						'JRNL        TITL   STRUCTURE OF NATIVE AND APO CARBONIC ANHYDRASE II            ',
+						'JRNL        TITL 2 AND STRUCTURE OF SOME OF ITS ANION-LIGAND                    ',
+						'JRNL        TITL 3 COMPLEXES.                                                   ',
+						'JRNL        EDIT   A.A.IVANOV, A.B.IVANOV, A.C.IVANOV, A.D.IVANOV, A.E.IVANOV,  ',
+						'JRNL        EDIT 2 A.F.IVANOV, A.R.IVANOV                                       ',
+						'JRNL        REF    J.MOL.BIOL.                   V. 227  1192 1992              ',
+						'JRNL        REF  2 J.MOL.BIOL.                                                  ',
+						'JRNL        PUBL   BLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAH ',
+						'JRNL        PUBL 2 2LAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAH ',
+						'JRNL        REFN                   ISSN 0022-2836                               ',
+						'JRNL        PMID   1629852711111111111111111111111111111111111111111111233333333',
+						'JRNL        PMID 2 16298527                                                     ',
+						'JRNL        DOI    1629852711111111111111111111111111111111111111111111233333333',
+						'JRNL        DOI  2 16298527                                                     '
+					]);
+
+			j.should.eql({
+				authorList: [
+					'K.HAKANSSON',
+					'M.CARLSSON',
+					'L.A.SVENSSON',
+					'A.LILJAS',
+					'K.HAKANSSON2',
+					'M.CARLSSON2',
+					'L.A.SVENSSON2',
+					'A.LILJAS2'
+				],
+				title: 'STRUCTURE OF NATIVE AND APO CARBONIC ANHYDRASE II AND STRUCTURE OF SOME OF ITS ANION-LIGAND COMPLEXES.',
+				editorList: [
+					'A.A.IVANOV',
+					'A.B.IVANOV',
+					'A.C.IVANOV',
+					'A.D.IVANOV',
+					'A.E.IVANOV',
+					'A.F.IVANOV',
+					'A.R.IVANOV'
+				],
+				ref: {
+					published: true,
+					pubName: 'J.MOL.BIOL.J.MOL.BIOL.',
+					volume: 227,
+					page: 1192,
+					year: 1992
+				},
+				pub: 'BLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAH 2LAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAH',
+				refn: {published: true, issn: '0022-2836'},
+				pmid: '162985271111111111111111111111111111111111111111111123333333316298527',
+				doi: '162985271111111111111111111111111111111111111111111123333333316298527'
 			});
 
 			done();
