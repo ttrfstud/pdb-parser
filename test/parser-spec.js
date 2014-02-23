@@ -7,6 +7,7 @@ var caveat = require('../src/parser').caveat;
 var compnd = require('../src/parser').compnd;
 var source = require('../src/parser').source;
 var keywds = require('../src/parser').keywds;
+var expdta = require('../src/parser').expdta;
 
 describe('parser', function () {
 	it('parses header', function () {
@@ -395,6 +396,36 @@ describe('parser', function () {
 				'MEMBRANE PROTEIN',
 				'PROTON-COUPLED EXCHANGER',
 				'TRANSPORT PROTEIN'
+			]
+		});
+
+		done();
+	});
+
+	it('parses expdta', function (done) {
+		var e = expdta(['EXPDTA    SOLUTION NMR                                                          ']);
+		
+		e.should.eql({
+			techniques: [
+				'SOLUTION NMR'
+			]
+		});
+
+		done();
+	});
+
+	it('parses expdta (synthetic)', function (done) {
+		var e = expdta([
+				'EXPDTA    SOLUTION NMR; FIBER DIFFRACTION; NEUTRON DIFFRACTION; ELECTRON        ',
+				'EXPDTA   2CRYSTALLOGRAPHY                                                       '
+			]);
+		
+		e.should.eql({
+			techniques: [
+				'SOLUTION NMR',
+				'FIBER DIFFRACTION',
+				'NEUTRON DIFFRACTION',
+				'ELECTRON CRYSTALLOGRAPHY'
 			]
 		});
 

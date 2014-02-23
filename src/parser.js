@@ -153,11 +153,20 @@ function obslte(obslte) {
 function keywds(keywds) {
 	var continuation = cc(keywds, 2);
 	
-	continuation = continuation.split(',');
-	continuation = continuation.map(function (el) { return el.trim(); });
+	continuation = continuation.split(/\s?,\s/g);
 	
 	return {
 		keywds: continuation
+	};
+}
+
+function expdta(expdta) {
+	var continuation = cc(expdta, 2);
+
+	continuation = continuation.split(/\s?;\s/g);
+
+	return {
+		techniques: continuation
 	};
 }
 
@@ -169,3 +178,4 @@ exports.caveat = caveat;
 exports.compnd = compnd;
 exports.source = source;
 exports.keywds = keywds;
+exports.expdta = expdta;
