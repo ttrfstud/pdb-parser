@@ -492,4 +492,17 @@ describe('parser', function () {
 
 		done();
 	});
+
+	it('parses  revdat', function (done) {
+		var r = revdat([
+				'REVDAT   4 1 01-MAR-90 2HRT    1       REMARK JRNL   REVDAT AUTHOR TITLE MDLTYP ',
+				'REVDAT   4 2 SOURCE                                                             ',
+				'REVDAT   3   13-JUL-11 3A22    1       VERSN                                    ',
+				'REVDAT   2   20-OCT-09 3A22    1       JRNL                                     ',
+				'REVDAT   1   14-JUL-09 3A22    0                                                '
+			]);
+
+		
+		done();
+	});
 })
