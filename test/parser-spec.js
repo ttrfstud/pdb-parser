@@ -14,6 +14,13 @@ var author = require('../src/parser').author;
 var revdat = require('../src/parser').revdat;
 var sprsde = require('../src/parser').sprsde;
 
+var jrnlauth = require('../src/parser').jrnlauth;
+var jrnltitl = require('../src/parser').jrnltitl;
+var jrnledit = require('../src/parser').jrnledit;
+var jrnlref  = require('../src/parser').jrnlref ;
+var jrnlpubl = require('../src/parser').jrnlpubl;
+var jrnlrefn = require('../src/parser').jrnlrefn;
+
 describe('parser', function () {
 	it('parses header', function () {
 		var h = header(['HEADER    MEMBRANE PROTEIN, TRANSPORT PROTEIN     20-JUL-06   2HRT              ']);
@@ -567,7 +574,7 @@ describe('parser', function () {
 	it('parses sprsde', function (done) {
 		var s = sprsde([
 				'SPRSDE  1 10-MAR-11 2HRT      2ART 2BRT 2CRT 2DRT 2ERT 2FRT 2GRT 2IRT 2JRT 2KRT ',
-				'SPRSDE  1 2LRT 2MRT                                                             ',
+				'SPRSDE  2 2LRT 2MRT                                                             ',
 			]);
 
 		s.should.eql({
@@ -594,5 +601,225 @@ describe('parser', function () {
 			});
 
 		done();
+	});
+
+	describe('parses jrnl', function () {
+		// errors in spec!
+		it('parses jrnl auth', function (done) {
+			var ja = jrnlauth([
+					'JRNL        AUTH   M.A.SEEGER,A.SCHIEFNER,T.EICHER,F.VERREY,K.DIEDERICHS,       ',
+					'JRNL        AUTH 2 K.M.POS                                                      '
+				]);
+
+			ja.should.eql({
+				authorList: [
+					'M.A.SEEGER',
+					'A.SCHIEFNER',
+					'T.EICHER',
+					'F.VERREY',
+					'K.DIEDERICHS',
+					'K.M.POS'
+				]
+			});
+
+			done();
+		});
+
+		it('parses jrnl titl', function (done) {
+			var jt = jrnltitl([
+					'JRNL        TITL   STRUCTURAL ASYMMETRY OF ACRB TRIMER SUGGESTS A PERISTALTIC   ',
+					'JRNL        TITL 2 PUMP MECHANISM.                                              '
+				]);
+
+			jt.should.eql({
+				title: 'STRUCTURAL ASYMMETRY OF ACRB TRIMER SUGGESTS A PERISTALTIC PUMP MECHANISM.'
+			})
+
+			done();
+		});
+
+		it('parses jrnl edit', function (done) {
+			var je = jrnledit([
+					'JRNL        EDIT   A.A.IVANOV, A.B.IVANOV, A.C.IVANOV, A.D.IVANOV, A.E.IVANOV,  ',
+					'JRNL        EDIT 2 A.A.IVANOV, A.B.IVANOV, A.C.IVANOV, A.D.IVANOV, J.VAN JOOK   '
+				]);
+			je.should.eql({
+				editorList: [
+					'A.A.IVANOV',
+					'A.B.IVANOV',
+					'A.C.IVANOV',
+					'A.D.IVANOV',
+					'A.E.IVANOV',
+					'A.A.IVANOV',
+					'A.B.IVANOV',
+					'A.C.IVANOV',
+					'A.D.IVANOV',
+					'J.VAN JOOK'
+				]
+			});
+
+			done();
+		});
+
+		it('parses jrnl ref (TO BE PUBLISHED)', function (done) {
+			var jr = jrnlref([
+					'JRNL        REF   TO BE PUBLISHED                                               '
+				]);
+
+			jr.should.eql({
+				published: false
+			});
+
+			done();
+		});
+
+		it('parses jrnl ref (one-line pubName, no volume, page, year', function (done) {
+			var jr = jrnlref([
+						'JRNL        REF    SOME.IMPORTANT.NAME.SOME.I           123   2010              '				
+					]);
+
+			jr.should.eql({
+				published: true,
+				pubName: 'SOME.IMPORTANT.NAME.SOME.I',
+				page: 123,
+				year: 2010
+			});
+
+			done();
+		});
+
+		// Page and year seem to always come together.. And according to schema on p.43 are always there..
+		// Volume is not mandatory
+
+		it('parses jrnl ref (one-line pubName, volume, page, year', function (done) {
+			var jr = jrnlref([
+						'JRNL        REF    SOME.IMPORTANT.NAME.SOME.I    V.   3 123   2010              '				
+					]);
+
+			jr.should.eql({
+				published: true,
+				pubName: 'SOME.IMPORTANT.NAME.SOME.I',
+				page: 123,
+				year: 2010,
+				volume: 3
+			});
+
+			done();
+		});
+
+		it('parses jrnl ref (multiline normal pubName, no volume, page, year)', function (done) {
+			var jr = jrnlref([
+					'JRNL        REF    SOME.IMPORTANT.NAME.SOME.I           123   2010              ',				
+					'JRNL        REF  2 MPORTANT NAME NAME NAME                                      '
+				]);
+
+			jr.should.eql({
+				published: true,
+				pubName: 'SOME.IMPORTANT.NAME.SOME.I MPORTANT NAME NAME NAME',
+				page: 123,
+				year: 2010
+			});
+
+			done();
+		});
+
+		it('parses jrnl ref (multiline normal pubName ending in the m-period, no volume, page, year)', function (done) {
+			var jr = jrnlref([
+					'JRNL        REF    SOME.IMPORTANT.NAME.SOME.            123   2010              ',				
+					'JRNL        REF  2 IMPORTANT NAME NAME NAME                                      '
+				]);
+
+			jr.should.eql({
+				published: true,
+				pubName: 'SOME.IMPORTANT.NAME.SOME.IMPORTANT NAME NAME NAME',
+				page: 123,
+				year: 2010
+			});
+
+			done();
+		});
+
+		it('parses jrnl ref (multiline normal pubName ending in the period, no volume, page, year)', function (done) {
+			var jr = jrnlref([
+					'JRNL        REF    SOME IMPORTANT NAME SOME.            123   2010              ',				
+					'JRNL        REF  2 IMPORTANT NAME NAME NAME                                      '
+				]);
+
+			jr.should.eql({
+				published: true,
+				pubName: 'SOME IMPORTANT NAME SOME. IMPORTANT NAME NAME NAME',
+				page: 123,
+				year: 2010
+			});
+
+			done();
+		});
+
+		it('parses jrnl ref (multiline normal pubName ending in the hypen, no volume, page, year)', function (done) {
+			var jr = jrnlref([
+					'JRNL        REF    SOME IMPORTANT NAME SOME-            123   2010              ',				
+					'JRNL        REF  2 IMPORTANT NAME NAME NAME                                      '
+				]);
+
+			jr.should.eql({
+				published: true,
+				pubName: 'SOME IMPORTANT NAME SOME-IMPORTANT NAME NAME NAME',
+				page: 123,
+				year: 2010
+			});
+
+			done();
+		});
+
+		it('parses jrnl publ', function (done) {
+			var jp = jrnlpubl([
+					'JRNL        PUBL   BLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAH ',
+					'JRNL        PUBL 2 2LAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAH ',
+				]);
+
+			jp.should.eql({
+				pub: 'BLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAH 2LAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAHBLAH'
+			});
+
+			done();
+		});
+
+		it('parses refn (not published)', function (done) {
+			var jr = jrnlrefn([
+					'JRNL        REFN                                                                '
+				]);
+
+			jr.should.eql({
+				published: false
+			});
+
+			done();
+		});
+
+		it('parses refn (published, ISSN)', function (done) {
+			var jr = jrnlrefn([
+					'JRNL        REFN                   ISSN 0960-894X                               '
+				]);
+
+			jr.should.eql({
+				published: true,
+				issn: '0960-894X'
+			});
+
+			done();
+		});
+
+		it('parses refn (published, ESSN)', function (done) {
+			var jr = jrnlrefn([
+					'JRNL        REFN                   ESSN 0960-894X                               '
+				]);
+
+			jr.should.eql({
+				published: true,
+				issn: '0960-894X'
+			});
+
+			done();
+		});
 	});
 })

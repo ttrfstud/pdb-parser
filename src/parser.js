@@ -203,14 +203,11 @@ function revdat(revdat) {
 	console.log('\n');
 
 	function modnum(revdatLine) {
-		console.log(revdatLine);
 		return parseInt(revdatLine.substr(7, 3), 10);
 	}
 
 	for (var i = 0; i < revdat.length; i++) {
 		currentModNum = modnum(revdat[i]);
-
-		console.log(currentModNum);
 
 		if (!prevModNum) {
 			prevModNum = currentModNum;
@@ -234,9 +231,6 @@ function revdat(revdat) {
 		var continuation = cc(el.slice(1), 4);
 		var modDate = date(continuation.substr(0, 9));
 		var modId = continuation.substr(10, 4);
-		console.log(continuation);
-		console.log(continuation.substr(18));
-		console.log(continuation.substr(15));
 		var modType = parseInt(continuation.substr(15, 1), 10);
 		var records = continuation.substr(17).split(' ').reduce(function (acc, el) {
 			if (!el) {
@@ -279,10 +273,108 @@ function sprsde(sprsde) {
 	};
 }
 
+function jrnlauth(jrnlauth) {
+	var continuation = cc(jrnlauth, 10);
+	continuation = continuation.split(',').map(function (el) { return el.trim(); });
+
+	return {
+		authorList: continuation
+	};
+}
+
+function jrnltitl(jrnltitl) {
+	var continuation = cc(jrnltitl, 10);
+
+	return {
+		title: continuation
+	};
+}
+
+function jrnledit(jrnledit) {
+	var continuation = cc(jrnledit, 10);
+	continuation = continuation.split(',').map(function (el) { return el.trim(); });
+
+	return {
+		editorList: continuation
+	};
+}
+
+function jrnlref(jrnlref) {
+	if (jrnlref.length === 1 && jrnlref[0].indexOf('TO BE PUBLISHED') > 0) {
+		return {
+			published: false
+		};
+	}
+
+	var pubName = jrnlref[0].substring(19, 47).trim();
+	var page = parseInt(jrnlref[0].substring(56, 61), 10);
+	var year = parseInt(jrnlref[0].substring(62, 66), 10);
+
+	if (jrnlref[0].substring(49, 51) === 'V.') {
+		var volume = parseInt(jrnlref[0].substring(51, 55));
+	}
+
+	if (jrnlref.length > 1) {
+		var pubNameParts = [pubName];
+		var i = 1;
+
+		for (; i < jrnlref.length; i++) {
+			pubNameParts.push(jrnlref[i].substring(19, 47).trim());
+		}
+
+		pubName = '';
+
+		for (var i = 0; i < pubNameParts.length; i++) {
+			if (!((pubNameParts[i].split('.').length - 1 > 1 && pubNameParts[i].substr(-1, 1) === '.') ||
+				pubNameParts[i].substr(-1, 1) === '-')) {
+				pubNameParts[i] += ' ';
+			}
+
+			pubName += pubNameParts[i];
+		}
+
+		pubName = pubName.trim();
+	}
+
+	var result = {
+		pubName: pubName,
+		published: true,
+		page: page,
+		year: year
+	};
+
+	if (volume) {
+		result.volume = volume;
+	}
+
+	return result;
+}
+
+function jrnlpubl(jrnlpubl) {
+	var continuation = cc(jrnlpubl, 10);
+
+	return {
+		pub: continuation
+	};
+}
+
+function jrnlrefn(jrnlrefn) {
+	if (jrnlrefn[0].indexOf('ISSN') === -1 && jrnlrefn[0].indexOf('ESSN') === -1) {
+		return {
+			published: false
+		};
+	}
+
+	return {
+		published: true,
+		issn: jrnlrefn[0].substring(40, 65).trim() 
+	};
+}
+
 exports.header = header;
 exports.obslte = obslte;
-exports.title = title;
-exports.split = split;
+exports.title  = title ;
+exports.split  = split ;
 exports.caveat = caveat;
 exports.compnd = compnd;
 exports.source = source;
@@ -293,3 +385,9 @@ exports.mdltyp = mdltyp;
 exports.author = author;
 exports.revdat = revdat;
 exports.sprsde = sprsde;
+exports.jrnlauth = jrnlauth;
+exports.jrnltitl = jrnltitl;
+exports.jrnledit = jrnledit;
+exports.jrnlref  = jrnlref ;
+exports.jrnlpubl = jrnlpubl;
+exports.jrnlrefn = jrnlrefn;
