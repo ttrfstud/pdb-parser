@@ -1049,6 +1049,7 @@ describe('parser', function () {
 		done();
 	});
 
+	// TODO: maybe (just maybe) look if these mad templates also need to be parsed
 	// it seems to be a free text, but the format seems to be program specific, so must be preserved
 	it('parses remark3', function (done) {
 		var r3 = remark3([
@@ -1136,6 +1137,79 @@ describe('parser', function () {
 				year: 2005
 			},
 			code: 'RCSB024502'			
+		});
+
+		done();
+	});
+
+	it('parses remark200', function (done) {
+		var r200 = remark200([
+				'REMARK 200                                                                      '
+				'REMARK 200 EXPERIMENTAL DETAILS                                                 '
+				'REMARK 200  EXPERIMENT TYPE                : X-RAY DIFFRACTION                  '
+				'REMARK 200  DATE OF DATA COLLECTION        : 19-JUN-06                          '
+				'REMARK 200  TEMPERATURE           (KELVIN) : 100                                '
+				'REMARK 200  PH                             : 7.0                                '
+				'REMARK 200  NUMBER OF CRYSTALS USED        : 1                                  '
+				'REMARK 200                                                                      '
+				'REMARK 200  SYNCHROTRON              (Y/N) : N                                  '
+				'REMARK 200  RADIATION SOURCE               : ROTATING ANODE                     '
+				'REMARK 200  BEAMLINE                       : NULL                               '
+				'REMARK 200  X-RAY GENERATOR MODEL          : RIGAKU                             '
+				'REMARK 200  MONOCHROMATIC OR LAUE    (M/L) : M                                  '
+				'REMARK 200  WAVELENGTH OR RANGE        (A) : 1.5418                             '
+				'REMARK 200  MONOCHROMATOR                  : OSMIC                              '
+				'REMARK 200  OPTICS                         : OSMIC                              '
+				'REMARK 200                                                                      '
+				'REMARK 200  DETECTOR TYPE                  : IMAGE PLATE                        '
+				'REMARK 200  DETECTOR MANUFACTURER          : RIGAKU RAXIS HTC                   '
+				'REMARK 200  INTENSITY-INTEGRATION SOFTWARE : MOSFLM                             '
+				'REMARK 200  DATA SCALING SOFTWARE          : CCP4 (SCALA)                       '
+				'REMARK 200                                                                      '
+				'REMARK 200  NUMBER OF UNIQUE REFLECTIONS   : 24038                              '
+				'REMARK 200  RESOLUTION RANGE HIGH      (A) : 1.900                              '
+				'REMARK 200  RESOLUTION RANGE LOW       (A) : 49.673                             '
+				'REMARK 200  REJECTION CRITERIA  (SIGMA(I)) : 0.000                              '
+				'REMARK 200                                                                      '
+				'REMARK 200 OVERALL.                                                             '
+				'REMARK 200  COMPLETENESS FOR RANGE     (%) : 99.3                               '
+				'REMARK 200  DATA REDUNDANCY                : 3.400                              '
+				'REMARK 200  R MERGE                    (I) : 0.09300                            '
+				'REMARK 200  R SYM                      (I) : 0.09300                            '
+				'REMARK 200  <I/SIGMA(I)> FOR THE DATA SET  : NULL                               '
+				'REMARK 200                                                                      '
+				'REMARK 200 IN THE HIGHEST RESOLUTION SHELL.                                     '
+				'REMARK 200  HIGHEST RESOLUTION SHELL, RANGE HIGH (A) : 1.90                     '
+				'REMARK 200  HIGHEST RESOLUTION SHELL, RANGE LOW  (A) : 1.99                     '
+				'REMARK 200  COMPLETENESS FOR SHELL     (%) : 97.9                               '
+				'REMARK 200  DATA REDUNDANCY IN SHELL       : 3.40                               '
+				'REMARK 200  R MERGE FOR SHELL          (I) : 0.39100                            '
+				'REMARK 200  R SYM FOR SHELL            (I) : 0.39100                            '
+				'REMARK 200  <I/SIGMA(I)> FOR SHELL         : 3.000                              '
+				'REMARK 200                                                                      '
+				'REMARK 200 DIFFRACTION PROTOCOL: SINGLE WAVELENGTH                              '
+				'REMARK 200 METHOD USED TO DETERMINE THE STRUCTURE: MOLECULAR REPLACEMENT        '
+				'REMARK 200 SOFTWARE USED: PHASER                                                '
+				'REMARK 200 STARTING MODEL: 1WMA                                                 '
+				'REMARK 200                                                                      '
+				'REMARK 200 REMARK: NULL                                                         '
+
+		r200.should.eql({
+			EXPERIMENT_DETAILS: {
+				'EXPERIMENT_TYPE' : 'X-RAY DIFFRACTION',
+				'DATE_OF_DATA_COLLECTION ' : {
+					day: 19,
+					month: 6, 
+					year: 2006
+				},
+				'TEMPERATURE' : 100,
+				PH : 7.0,
+				'NUMBER_OF_CRYSTALS_USED' : 1,
+				'SYNCHROTRON' : 'N',
+				'RADIATION_SOURCE' : 'ROTATING ANODE',
+				'BEAMLINE' : 'NULL',
+				'X_RAY_GENERATOR_MODEL' : 'RIGAKU', 
+			}
 		});
 
 		done();

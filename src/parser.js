@@ -537,6 +537,10 @@ function remark100(remark100) {
 	}
 }
 
+function remark200(remark200) {
+	return;
+}
+
 exports.header = header;
 exports.obslte = obslte;
 exports.title  = title ;
@@ -567,3 +571,4 @@ exports.remark3 = remark3;
 exports.remark4 = remark4;
 exports.remark5 = remark5;
 exports.remark100 = remark100;
+exports.remark200 = remark200;
